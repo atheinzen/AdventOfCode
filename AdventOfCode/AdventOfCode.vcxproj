@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2023\Day1.h" />
+    <ClInclude Include="2023\Day2.h" />
     <ClInclude Include="AdventOfCode.h" />
     <ClInclude Include="Day.h" />
   </ItemGroup>

@@ -4,16 +4,13 @@
 #include<fstream>
 #include<string>
 #include<iostream>
-#include<vector>
-#include<numeric>
+#include<sstream>
 
-class Day1 : public Day
+class Day2 : public Day
 {
 private:
 	int solvePart1();
-	int checkWord(std::string_view potential);
 	int solvePart2();
-
 public:
 	int solve();
 };

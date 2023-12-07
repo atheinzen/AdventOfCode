@@ -1,6 +1,6 @@
 #include "Day1.h"
 
-int solvePart1()
+int Day1::solvePart1()
 {
     std::ifstream file("2023/Day1.txt");
     std::string str;
@@ -27,7 +27,7 @@ int solvePart1()
     return calibSum;
 }
 
-int checkWord(std::string_view potential)
+int Day1::checkWord(std::string_view potential)
 {
     if (potential.find("one") != std::string::npos) return 1;
     if (potential.find("two") != std::string::npos) return 2;
@@ -41,7 +41,7 @@ int checkWord(std::string_view potential)
     return 0;
 }
 
-int solvePart2()
+int Day1::solvePart2()
 {
     std::ifstream file("2023/Day1.txt");
     std::string str;

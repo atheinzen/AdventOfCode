@@ -4,7 +4,8 @@
 
 int main()
 {
-    Day* today = new Day1();
+    //Day* today = new Day1();
+    Day* today = new Day2();
 
 
     std::cout << "Advent of Code: " << std::endl;
