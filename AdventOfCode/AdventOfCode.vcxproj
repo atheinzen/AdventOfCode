@@ -134,12 +134,15 @@
     <ClCompile Include="2023\Day4.cpp" />
     <ClCompile Include="2023\Day5.cpp" />
     <ClCompile Include="2023\Day6.cpp" />
+    <ClCompile Include="2023\Day7.cpp" />
     <ClCompile Include="AdventOfCode.cpp" />
     <ClCompile Include="Day.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2023\Day1.h" />
     <ClInclude Include="2023\Day2.h" />
+    <ClInclude Include="2023\Day3.h" />
+    <ClInclude Include="2023\Day7.h" />
     <ClInclude Include="AdventOfCode.h" />
     <ClInclude Include="Day.h" />
   </ItemGroup>
