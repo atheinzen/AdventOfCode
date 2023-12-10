@@ -83,5 +83,8 @@
     <ClInclude Include="2023\Day4.h">
       <Filter>Header Files\2023</Filter>
     </ClInclude>
+    <ClInclude Include="2023\Day5.h">
+      <Filter>Header Files\2023</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

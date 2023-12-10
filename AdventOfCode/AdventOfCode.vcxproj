@@ -146,6 +146,7 @@
     <ClInclude Include="2023\Day2.h" />
     <ClInclude Include="2023\Day3.h" />
     <ClInclude Include="2023\Day4.h" />
+    <ClInclude Include="2023\Day5.h" />
     <ClInclude Include="2023\Day7.h" />
     <ClInclude Include="2023\Day8.h" />
     <ClInclude Include="2023\Day9.h" />
