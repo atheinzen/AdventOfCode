@@ -4,4 +4,5 @@
 #include "2023/Day3.h"
 #include "2023/Day4.h"
 #include "2023/Day5.h"
+#include "2023/Day6.h"
 #include <chrono>

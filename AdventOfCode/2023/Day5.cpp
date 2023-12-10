@@ -174,7 +174,7 @@ long long Day5::solvePart2()
 
 int Day5::solve()
 {
-    std::cout << "Solving Day 1" << std::endl;
+    std::cout << "Solving Day 5" << std::endl;
 
     auto part1 = solvePart1();
     std::cout << "Part 1: " << part1 << std::endl;
