@@ -4,15 +4,6 @@
 using CategoryTuple = std::tuple<long long, long long, long long>;
 using SeedPair = std::pair<long long, long long>;
 
-class Layer
-{
-public:
-    int firstLayerIndex = 0;
-    int level = 0;
-    long rangeStart = 0;
-    long rangeEnd = 0;
-};
-
 std::vector<long long> getSeedNumbers(const std::string& seedString)
 {
     std::stringstream ss(seedString);
@@ -191,6 +182,15 @@ int Day5::solve()
 // Start of the non-brute force method, might revisit later
 //
 //
+
+//class Layer
+//{
+//public:
+//    int firstLayerIndex = 0;
+//    int level = 0;
+//    long rangeStart = 0;
+//    long rangeEnd = 0;
+//};
 
 
 /*  std::vector<std::shared_ptr<Layer>> allLayers;
