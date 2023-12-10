@@ -9,7 +9,8 @@ int main()
     //Day* today = new Day3();
     //Day* today = new Day4();
     //Day* today = new Day5();
-    Day* today = new Day6();
+    //Day* today = new Day6();
+    Day* today = new Day7();
 
     std::cout << "Advent of Code: " << std::endl;
 
