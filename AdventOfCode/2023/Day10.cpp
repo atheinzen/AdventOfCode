@@ -2,6 +2,7 @@
 
 using Coord = std::pair<int, int>;
 
+//Coordinate Enum
 enum class Direction
 {
     NORTH,
@@ -10,6 +11,7 @@ enum class Direction
     WEST
 };
 
+//from the perspective of the tile, which other direction do i connect to?
 Direction tilesOtherConnection(const char& symbol, const Direction fromDir)
 {
     switch (symbol)
@@ -41,13 +43,14 @@ Direction tilesOtherConnection(const char& symbol, const Direction fromDir)
     case '.':
     {
         std::cout << "Should not get this" << std::endl;
-        return Direction::SOUTH; //null
+        return Direction::SOUTH; //todo null
     }
     default:
-        return Direction::SOUTH; //null
+        return Direction::SOUTH; //todo null
     }
 }
 
+//from the perspective of the starting tile, check which way we can go from the starting tile by checking adjacent tiles for a conneciton. 
 bool adjacentTileConnects(const Direction fromDir, const char tile) 
 {
     bool connects = false;
@@ -112,6 +115,7 @@ bool adjacentTileConnects(const Direction fromDir, const char tile)
     return connects;
 }
 
+//2D vectors of chars 
 std::vector<std::vector<char>> parseInput(std::ifstream& file)
 {
     std::string str;
@@ -128,6 +132,8 @@ std::vector<std::vector<char>> parseInput(std::ifstream& file)
     }
     return allLines;
 }
+
+//where is start start coordinate? find the 'S'
 Coord getStartPair(const std::vector<std::vector<char>>& allInputs)
 {
     for (int y = 0; y < allInputs.size(); y++)
@@ -142,6 +148,7 @@ Coord getStartPair(const std::vector<std::vector<char>>& allInputs)
     }
 }
 
+//so we can ask adjacent tiles if they connect based on current tiles directions
 Direction directionFlipper(Direction dir)
 {
     if (dir == Direction::EAST) return Direction::WEST;
@@ -151,16 +158,18 @@ Direction directionFlipper(Direction dir)
     return dir;
 }
 
+//find a connecting tile for the start tile
 std::pair<Direction,Coord> getStartMove(Coord start, const std::vector<std::vector<char>>& allLines)
 {
-    //todo range check? shouldnt need to actually
-    if (adjacentTileConnects(directionFlipper(Direction::WEST), allLines[start.second][start.first - 1])) return std::pair<Direction, Coord> { Direction::WEST, Coord{ start.first - 1, start.second } };
-    if (adjacentTileConnects(directionFlipper(Direction::EAST), allLines[start.second][start.first+1])) return std::pair<Direction, Coord> { Direction::EAST, Coord{   start.first + 1, start.second } };
-    if (adjacentTileConnects(directionFlipper(Direction::NORTH), allLines[start.second-1][start.first])) return std::pair<Direction, Coord> { Direction::NORTH, Coord{ start.first, start.second - 1 } };
-    if (adjacentTileConnects(directionFlipper(Direction::SOUTH), allLines[start.second+1][start.first])) return std::pair<Direction, Coord> { Direction::SOUTH, Coord{ start.first, start.second + 1 } };
-    return std::pair<Direction, Coord> { Direction::NORTH, Coord{ start.first, start.second } };
+    //range check and then check if adjacent tile is a potential first move 
+    if (start.first > 0 &&                    adjacentTileConnects(directionFlipper(Direction::WEST), allLines[start.second][start.first - 1])) return std::pair<Direction, Coord> { Direction::WEST, Coord{ start.first - 1, start.second }};
+    if (start.first < allLines[0].size()-1 && adjacentTileConnects(directionFlipper(Direction::EAST), allLines[start.second][start.first + 1])) return std::pair<Direction, Coord> { Direction::EAST, Coord{ start.first + 1, start.second }};
+    if (start.second > 0 &&                   adjacentTileConnects(directionFlipper(Direction::NORTH), allLines[start.second - 1][start.first])) return std::pair<Direction, Coord> { Direction::NORTH, Coord{ start.first, start.second - 1 }};
+    if (start.second < allLines.size()-1 &&   adjacentTileConnects(directionFlipper(Direction::SOUTH), allLines[start.second + 1][start.first])) return std::pair<Direction, Coord> { Direction::SOUTH, Coord{ start.first, start.second + 1 }};
+    return std::pair<Direction, Coord> { Direction::NORTH, Coord{ start.first, start.second } }; //shoulnd't happen 
 }
 
+//advance the coordinate based on direction of move
 Coord getMove(Direction dir, Coord coord)
 {
     Coord newCoord = coord;
@@ -194,42 +203,10 @@ Coord getMove(Direction dir, Coord coord)
     return newCoord;
 }
 
-
-int Day10::solvePart1()
+//traverse the puzzle loop until we get back to 'S'
+void getAllPathCoords(std::pair<Direction, Coord> startMove, std::vector<std::vector<char>> allLines, std::vector<Coord>& allCoords)
 {
-    std::ifstream file("2023/Day10.txt");
-    auto allLines = parseInput(file);
-    auto startLocation = getStartPair(allLines);
-
     char newChar = '0';
-    std::vector<Coord> allCoords;
-    allCoords.push_back(startLocation);
-    std::pair<Direction, Coord> startMove = getStartMove(startLocation, allLines);
-    auto currentDirection = startMove.first;
-    auto currentLocation = startMove.second;
-    while(newChar != 'S')
-    { 
-        allCoords.push_back(currentLocation);
-        currentDirection = tilesOtherConnection(allLines[currentLocation.second][currentLocation.first], directionFlipper(currentDirection));
-        currentLocation = getMove(currentDirection, Coord{ currentLocation.first , currentLocation.second });
-        newChar = allLines[currentLocation.second][currentLocation.first];
-    }
-
-    return allCoords.size() / 2; //prompt wants number of furthest search
-} 
-
-
-
-int Day10::solvePart2()
-{
-    std::ifstream file("2023/Day10.txt");
-    auto allLines = parseInput(file);
-    auto startLocation = getStartPair(allLines);
-
-    char newChar = '0';
-    std::vector<Coord> allCoords;
-    allCoords.push_back(startLocation);
-    std::pair<Direction, Coord> startMove = getStartMove(startLocation, allLines);
     auto currentDirection = startMove.first;
     auto currentLocation = startMove.second;
     while (newChar != 'S')
@@ -239,74 +216,125 @@ int Day10::solvePart2()
         currentLocation = getMove(currentDirection, Coord{ currentLocation.first , currentLocation.second });
         newChar = allLines[currentLocation.second][currentLocation.first];
     }
+}
 
-    std::vector<std::vector<std::pair<int, int>>> boundXs (allLines.size());
-    std::vector<std::vector<std::pair<int, int>>> boundYs(allLines[0].size());
-    std::vector<int> lastXs = std::vector<int>(allLines.size(), 0);
-    std::vector<int> lastYs = std::vector<int>(allLines[0].size(), 0);
+int Day10::solvePart1()
+{
+    std::ifstream file("2023/Day10.txt");
+    auto allLines = parseInput(file); //load in puzzle input
+    auto startLocation = getStartPair(allLines); //find the S
+    std::pair<Direction, Coord> startMove = getStartMove(startLocation, allLines); //find a possible starting move
+    std::vector<Coord> allCoords; 
+    allCoords.push_back(startLocation); //plug in 'S' location to start
+    getAllPathCoords(startMove, allLines, allCoords); //traverse the loop
+    return allCoords.size() / 2; //prompt wants travel distance to furthest point in loop. 
+} 
 
-    for (auto pair : allCoords)
+//check if the coordinate we are looking at is in the path.
+bool checkExistingCoord(std::pair<int, int> coord, std::vector<Coord> allCoords)
+{
+    bool existingCoord = false;
+    for (auto exostingCoord : allCoords)
     {
-        if (lastXs[pair.second] != 0)
+        if (exostingCoord.first == coord.first && exostingCoord.second == coord.second) existingCoord = true;
+    }
+    return existingCoord;
+}
+
+//check how many times the path crosses a specific row or column. This will determine if any tile bounded by the loop is in or out. 
+void getLineCrossIndices(std::vector<std::vector<int>>& lineCrosses, std::vector<Coord> allCoords, bool horizontal)
+{
+    for (int x = 0; x < lineCrosses.size(); x++) //for each row or column
+    {
+        bool above = false; //are we greater than or less than the current row or column
+        Coord firstCoord = allCoords[0];
+        auto currentSpot = horizontal ? firstCoord.second : firstCoord.first; //our current index, horizontal is rows or columns switch.
+        above = currentSpot > x; //we wont really know until we move
+        bool onTheLineToStart = (currentSpot == x); //if we start by moving laterally we want to ignore that. 
+        for (int i = 1; i < allCoords.size(); i++)
         {
-            boundXs[pair.second].push_back(std::pair<int, int>(pair.first <= lastXs[pair.second] ? pair.first : lastXs[pair.second], pair.first >= lastXs[pair.second] ? pair.first : lastXs[pair.second]));
-            lastXs[pair.second] = 0;
-        }
-        else 
-        {
-            lastXs[pair.second] = pair.first;
-        }
-        if (lastYs[pair.first] != 0)
-        {
-            boundYs[pair.first].push_back(std::pair<int, int>(pair.second <= lastYs[pair.first] ? pair.second : lastYs[pair.first], pair.second >= lastYs[pair.first] ? pair.second : lastYs[pair.first]));
-            lastYs[pair.first] = 0;
-        }
-        else
-        {
-            lastYs[pair.first] = pair.second;
+            Coord thisCoord = allCoords[i];
+            currentSpot = horizontal ? thisCoord.second : thisCoord.first;
+            if (onTheLineToStart && currentSpot != x) //we were moving laterally at the start so we dont count that as a crossing. 
+            {
+                above = currentSpot > x; //this will now be correct. 
+                onTheLineToStart = false;
+                continue;
+            }
+            if ((currentSpot >= x && above) || (currentSpot <= x && !above)) { continue; } //not a transition of the line
+            if ((currentSpot > x && !above) || (currentSpot < x && above)) //crossed the line
+            {
+                if (horizontal) //row or column
+                {
+                    lineCrosses[x].push_back(thisCoord.first);
+                }
+                else
+                {
+                    lineCrosses[x].push_back(thisCoord.second);
+                }
+                above = currentSpot > x; //swapped
+            }
         }
     }
+}
 
+//for each point, check how many times we crossed a boundary in both x and y directions before reaching the point. If both are odd, then we are bounded by the loop.
+std::vector<Coord> checkLineCrossesForPoints(const std::vector<std::vector<char>>& allLines, std::vector<Coord> allCoords, std::vector<std::vector<int>>& lineCrossXs, std::vector<std::vector<int>>& lineCrossYs)
+{
     std::vector<Coord> boundedCoords;
-    for (int y = 0; y < allLines.size(); y++)
+    for (int y = 0; y < allLines.size(); y++) //for each row
     {
-        for (int x = 0; x < allLines[0].size(); x++)
-        {    
-            bool existingCoord = false;
-            for (auto coord : allCoords)
+        for (int x = 0; x < allLines[0].size(); x++) //for each column
+        {
+            if (checkExistingCoord({ x,y }, allCoords)) continue; //points that are part of the loop dont count
+            int xLineCrosses = 0;
+            int yLineCrosses = 0;
+            Coord lastCoord;
+            for (auto xCoord : lineCrossXs[y]) //row crossing
             {
-                if (coord.first == x && coord.second == y) existingCoord = true;
-            }
-            if (existingCoord) continue;
-
-            int foundX = 0;
-            int foundY = 0;
-            for(auto xBound : boundXs[y])
-            {
-                if (x > xBound.first && x < xBound.second)
+                if (xCoord < x) 
                 {
-                    foundX++;
+                    xLineCrosses++;
                 }
             }
-            for (auto yBound : boundYs[x])
+            for (auto yCoord : lineCrossYs[x]) //column cross really
             {
-                if (y > yBound.first && y < yBound.second)
+                if (yCoord < y)
                 {
-                    foundY++;
+                    yLineCrosses++;
                 }
             }
-            if (foundX % 2 == 1 && foundY % 2 == 1) boundedCoords.push_back({ x , y });
+            //odd number of row and column crosses = in the loop. 
+            if (xLineCrosses % 2 == 1 && yLineCrosses % 2 == 1) boundedCoords.push_back({ x , y });
         }
     }
+    return boundedCoords;
+}
 
+int Day10::solvePart2()
+{
+    std::ifstream file("2023/Day10.txt");
+    auto allLines = parseInput(file); //2D vector of chars
+    auto startLocation = getStartPair(allLines); //where is the 'S'
+    std::pair<Direction, Coord> startMove = getStartMove(startLocation, allLines); //find a possible start move
+    std::vector<Coord> allCoords;
+    allCoords.push_back(startLocation); //add 'S' as starting point
+    getAllPathCoords(startMove, allLines, allCoords); //fill allCoords by traversing the loop
 
-    return boundedCoords.size(); 
+    std::vector<std::vector<int>> importantXs(allLines.size()); //line cross indexes
+    std::vector<std::vector<int>> importantYs(allLines[0].size()); //column cross indexes
 
+    getLineCrossIndices(importantXs, allCoords, true); //true = horizontal (row check)
+    getLineCrossIndices(importantYs, allCoords, false); //false = vertical (column check);
+
+    std::vector<Coord> boundedCoords = checkLineCrossesForPoints(allLines, allCoords, importantXs, importantYs); //how many tiles in the loop by checking boundary crosses 
+
+    return boundedCoords.size(); //all tiles contained in the loop.
 }
 
 int Day10::solve()
 {
-    std::cout << "Solving Day 9" << std::endl;
+    std::cout << "Solving Day 10" << std::endl;
 
     auto part1 = solvePart1();
     std::cout << "Part 1: " << part1 << std::endl;
