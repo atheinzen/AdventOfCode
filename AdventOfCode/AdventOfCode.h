@@ -10,4 +10,5 @@
 #include "2023/Day9.h"
 #include "2023/Day10.h"
 #include "2023/Day11.h"
+#include "2023/Day12.h"
 #include <chrono>
