@@ -50,7 +50,7 @@ std::string& trim(std::string& s, char c, bool reverse = false)
 
 std::string stripExcessPeriods(std::string& springs)
 {
-    trim(springs, '.', true);
+  //  trim(springs, '.', true);
     trim(springs, '.', false);
     std::string deduped;
     bool previousWasAPeriod = false;
@@ -75,6 +75,89 @@ std::string buildMatchString(std::vector<int> brokens)
 }
 
 
+InputPair folder(std::string& springs, std::vector<int>& brokens, int folds)
+{
+    std::string newSprings = springs;
+    for (int i = 0; i < folds-1; i++)
+    {
+        newSprings += "?" + springs;
+    }
+    std::vector<int> newBrokens;
+    newBrokens.insert(newBrokens.begin(), brokens.begin(), brokens.end());
+    for (int i = 0; i < folds - 1; i++)
+    {
+        newBrokens.insert(newBrokens.begin(), brokens.begin(), brokens.end());
+    }
+    return InputPair { newSprings, newBrokens };
+}
+
+long long checkAtIndex(std::string currentSprings, const std::string& rawInput,  std::string& matchString, int index)
+{
+    currentSprings = stripExcessPeriods(currentSprings);
+    if (currentSprings == matchString.substr(0, currentSprings.length()))
+    {
+        if (index >= rawInput.length()) //stop if they match, and all rawinputs processed
+        {
+            if (matchString.length() != currentSprings.length())
+            {
+                return 0;
+            }
+            return 1;
+        }
+        else if (rawInput[index] == '.' || rawInput[index] == '#')
+        {
+            currentSprings += rawInput[index];
+            return checkAtIndex(currentSprings, rawInput, matchString, index + 1);
+        }
+        if (rawInput[index] == '?')
+        {
+            auto leftString = currentSprings + ".";
+            auto rightString = currentSprings + "#";
+            return checkAtIndex(leftString, rawInput, matchString, index + 1) + checkAtIndex(rightString, rawInput, matchString, index + 1);
+        }
+    }
+    else 
+    {
+        return 0;
+    }
+}
+
+
+
+long long getMatchesMethod2(std::string& springs, std::vector<int> brokens)
+{
+    std::string dedupedSprings = stripExcessPeriods(springs);
+    std::string matchString = buildMatchString(brokens);
+    trim(dedupedSprings, '.', true);
+    std::string currentString;
+    return checkAtIndex(currentString, dedupedSprings, matchString, 0);
+}
+
+
+long long Day12::solvePart2()
+{
+    std::ifstream file("2023/Day12.txt");
+    std::vector<InputPair> inputPairs = parseInput(file);
+    std::vector<InputPair> fiveFoldInputs;
+    for (auto pair : inputPairs)
+    {
+        fiveFoldInputs.push_back(folder(pair.first, pair.second, 5));
+    }
+    long long runningCount = 0;
+    long long count = 0;
+    long long number = 1;
+    for (auto pair : fiveFoldInputs)
+    {
+        count = getMatchesMethod2(pair.first, pair.second);
+        std::cout << number << " " << count << std::endl;
+        runningCount += count;
+        number++;
+    }
+    return runningCount;
+} 
+
+
+
 std::vector<std::string> generateAllPossibleStrings(std::string& input)
 {
     int questionMarks = 0;
@@ -84,7 +167,7 @@ std::vector<std::string> generateAllPossibleStrings(std::string& input)
     }
 
     std::vector<std::string> allStrings;
-    for (int i = 0; i < std::pow(2,questionMarks); i++)
+    for (int i = 0; i < std::pow(2, questionMarks); i++)
     {
         std::bitset<32> bs(i);
         std::string bitString(bs.to_string());
@@ -123,46 +206,13 @@ long long checkPossibleMatches(std::string& springs, std::string& find)
     return matches;
 }
 
-InputPair folder(std::string& springs, std::vector<int>& brokens, int folds)
-{
-    std::string newSprings = springs;
-    for (int i = 0; i < folds-1; i++)
-    {
-        newSprings += "?" + springs;
-    }
-    std::vector<int> newBrokens;
-    newBrokens.insert(newBrokens.begin(), brokens.begin(), brokens.end());
-    for (int i = 0; i < folds - 1; i++)
-    {
-        newBrokens.insert(newBrokens.begin(), brokens.begin(), brokens.end());
-    }
-    return InputPair { newSprings, newBrokens };
-}
 
-int getMatches(std::string& springs, std::vector<int> brokens)
+long long getMatches(std::string& springs, std::vector<int> brokens)
 {
     std::string dedupedSprings = stripExcessPeriods(springs);
     std::string matchString = buildMatchString(brokens);
-    return checkPossibleMatches(dedupedSprings, matchString);
+    return checkPossibleMatches(dedupedSprings, matchString += ".");//hack to match p1
 }
-
-
-long long Day12::solvePart2()
-{
-    std::ifstream file("2023/Day12.txt");
-    std::vector<InputPair> inputPairs = parseInput(file);
-    std::vector<InputPair> fiveFoldInputs;
-    for (auto pair : inputPairs)
-    {
-        fiveFoldInputs.push_back(folder(pair.first, pair.second, 5));
-    }
-    long long runningCount = 0;
-    for (auto pair : fiveFoldInputs)
-    {
-        runningCount += getMatches(pair.first, pair.second);
-    }
-    return runningCount;
-} 
 
 long long Day12::solvePart1()
 {
@@ -180,8 +230,8 @@ int Day12::solve()
 {
     std::cout << "Solving Day 11" << std::endl;
 
-    auto part1 = solvePart1();
-    std::cout << "Part 1: " << part1 << std::endl;
+   /* auto part1 = solvePart1();
+    std::cout << "Part 1: " << part1 << std::endl;*/
 
     auto part2 = solvePart2();
     std::cout << "Part 2: " << part2 << std::endl;
