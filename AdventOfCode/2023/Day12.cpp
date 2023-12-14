@@ -93,18 +93,20 @@ InputPair folder(std::string& springs, std::vector<int>& brokens, int folds)
 
 long long checkAtIndex(std::string currentSprings, const std::string& rawInput,  std::string& matchString, int index)
 {
-    currentSprings = stripExcessPeriods(currentSprings);
-    if (currentSprings == matchString.substr(0, currentSprings.length()))
+    if (index >= rawInput.length())
     {
-        if (index >= rawInput.length()) //stop if they match, and all rawinputs processed
+        trim(currentSprings, '.', true);
+        if (currentSprings == matchString)
         {
-            if (matchString.length() != currentSprings.length())
-            {
-                return 0;
-            }
             return 1;
         }
-        else if (rawInput[index] == '.' || rawInput[index] == '#')
+        return 0;
+    }
+
+    currentSprings = stripExcessPeriods(currentSprings);
+    if (currentSprings == matchString.substr(0, currentSprings.length()) || currentSprings[currentSprings.length()-1] == '.')
+    {
+        if (rawInput[index] == '.' || rawInput[index] == '#')
         {
             currentSprings += rawInput[index];
             return checkAtIndex(currentSprings, rawInput, matchString, index + 1);
@@ -211,7 +213,8 @@ long long getMatches(std::string& springs, std::vector<int> brokens)
 {
     std::string dedupedSprings = stripExcessPeriods(springs);
     std::string matchString = buildMatchString(brokens);
-    return checkPossibleMatches(dedupedSprings, matchString += ".");//hack to match p1
+    std::string currentSpring;
+    return checkAtIndex(currentSpring, dedupedSprings, matchString += ".", 0);//hack to match p1
 }
 
 long long Day12::solvePart1()
@@ -219,9 +222,14 @@ long long Day12::solvePart1()
     std::ifstream file("2023/Day12.txt");
     std::vector<InputPair> inputPairs = parseInput(file);
     long long runningCount = 0;
+    long long count = 0;
+    long long number = 1;
     for (auto pair : inputPairs)
     {
-        runningCount += getMatches(pair.first, pair.second);
+        count = getMatchesMethod2(pair.first, pair.second);
+        std::cout << number << " " << count << std::endl;
+        runningCount += count;
+        number++;
     }
     return runningCount;
 }
@@ -230,8 +238,8 @@ int Day12::solve()
 {
     std::cout << "Solving Day 11" << std::endl;
 
-   /* auto part1 = solvePart1();
-    std::cout << "Part 1: " << part1 << std::endl;*/
+    auto part1 = solvePart1();
+    std::cout << "Part 1: " << part1 << std::endl;
 
     auto part2 = solvePart2();
     std::cout << "Part 2: " << part2 << std::endl;
