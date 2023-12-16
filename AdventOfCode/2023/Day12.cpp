@@ -197,7 +197,7 @@ long long Day12::solvePart2()
 
 int Day12::solve()
 {
-    std::cout << "Solving Day 11" << std::endl;
+    std::cout << "Solving Day 12" << std::endl;
 
    auto part1 = solvePart1();
     std::cout << "Part 1: " << part1 << std::endl;
