@@ -135,6 +135,7 @@
     <ClCompile Include="2023\Day12.cpp" />
     <ClCompile Include="2023\Day13.cpp" />
     <ClCompile Include="2023\Day14.cpp" />
+    <ClCompile Include="2023\Day15.cpp" />
     <ClCompile Include="2023\Day2.cpp" />
     <ClCompile Include="2023\Day3.cpp" />
     <ClCompile Include="2023\Day4.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="2023\Day12.h" />
     <ClInclude Include="2023\Day13.h" />
     <ClInclude Include="2023\Day14.h" />
+    <ClInclude Include="2023\Day15.h" />
     <ClInclude Include="2023\Day2.h" />
     <ClInclude Include="2023\Day3.h" />
     <ClInclude Include="2023\Day4.h" />

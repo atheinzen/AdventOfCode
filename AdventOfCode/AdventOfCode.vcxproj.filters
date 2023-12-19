@@ -69,6 +69,9 @@
     <ClCompile Include="2023\Day14.cpp">
       <Filter>Source Files\2023</Filter>
     </ClCompile>
+    <ClCompile Include="2023\Day15.cpp">
+      <Filter>Source Files\2023</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdventOfCode.h">
@@ -117,6 +120,9 @@
       <Filter>Header Files\2023</Filter>
     </ClInclude>
     <ClInclude Include="2023\Day14.h">
+      <Filter>Header Files\2023</Filter>
+    </ClInclude>
+    <ClInclude Include="2023\Day15.h">
       <Filter>Header Files\2023</Filter>
     </ClInclude>
   </ItemGroup>
